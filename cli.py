@@ -104,6 +104,10 @@ def show(args):
 
 def sync(args):
     cli.sync(args.dry_run)
+    if args.show:
+        class Args:
+            target = 'pipeline'
+        show(Args())
 
 
 if __name__ == "__main__":
@@ -118,6 +122,7 @@ if __name__ == "__main__":
 
     sync_parser = subparsers.add_parser('sync', help='Syncs boards')
     sync_parser.add_argument('--dry-run', action='store_true', help="If provided the commands aren't executed")
+    sync_parser.add_argument('--show', action='store_true', help="Shows pipeline status after a sync")
     sync_parser.set_defaults(func=sync)
 
     if len(sys.argv) <= 1:
