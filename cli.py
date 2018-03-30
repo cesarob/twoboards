@@ -31,6 +31,12 @@ class TwoBoardsCli:
                 rows.append(colorized_row)
             print_table(status, header, rows)
 
+    def show_pre_pipeline():
+        self._show_board(self.twoboards.get_pre_pipeline_state)
+
+    def show_post_pipeline():
+        self._show_board(self.twoboards.get_post_pipeline_state)
+
     def show_tech(self):
         self._show_board(self.twoboards.get_tech_orphan_tasks)
 
@@ -94,6 +100,10 @@ cli = create_cli()
 def show(args):
     if args.target == 'pipeline':
         cli.show()
+    elif args.target == 'pre':
+        cli.show_pre_pipeline()
+    elif args.taget == 'post':
+        cli.show_post_pipeline()
     elif args.target == 'tech':
         cli.show_tech()
     elif args.target == 'product':
@@ -115,7 +125,7 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(help='sub-command help')
 
     show_parser = subparsers.add_parser('show', help='Shows status')
-    show_parser.add_argument('target', default='pipeline', nargs='?', choices=['pipeline', 'tech', 'product'],
+    show_parser.add_argument('target', default='pipeline', nargs='?', choices=['pre', 'post', 'pipeline', 'tech', 'product'],
         help="Shows the tasks that are in the 'pipeline', or the ones that are outside the pipeline in 'tech' or " +
         "'product' boards")
     show_parser.set_defaults(func=show)

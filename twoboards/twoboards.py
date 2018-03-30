@@ -15,11 +15,11 @@ BOAD_PIPELINE = ['Doing']
 
 
 class TwoBoards:
-    def __init__(self, client, pre_pipeline=PRE_PIPELINE, pipeline=PIPELINE, post_pipeline=POST_PIPELINE):
+    def __init__(self, client, pre_pipeline=None, pipeline=None, post_pipeline=None):
         self.client = client
-        self.pre_pipeline = pre_pipeline
-        self.pipeline = pipeline
-        self.post_pipeline = post_pipeline
+        self.pre_pipeline = pre_pipeline if pre_pipeline else PRE_PIPELINE
+        self.pipeline = pipeline if pipeline else PIPELINE
+        self.post_pipeline = post_pipeline if post_pipeline else POST_PIPELINE
 
         self.full_pipeline = self.pre_pipeline + self.pipeline + self.post_pipeline
         self._product_board = None
@@ -145,6 +145,30 @@ class TwoBoards:
                         'name': card.name,
                         'labels': labels
                     })
+        return result
+
+    def get_pre_pipeline_state(self):
+        result = {}
+        for status in self.pre_pipeline:
+            result[status] = []
+            for card in self.get_user_stories_by_status(status):
+                labels = [label.name for label in card.labels]
+                result[status].append({
+                    'name': card.name,
+                    'labels': labels
+                })
+        return result
+
+    def get_post_pipeline_state(self):
+        result = {}
+        for status in self.post_pipeline:
+            result[status] = []
+            for card in self.get_user_stories_by_status(status):
+                labels = [label.name for label in card.labels]
+                result[status].append({
+                    'name': card.name,
+                    'labels': labels
+                })
         return result
 
     def get_user_stories_state(self):

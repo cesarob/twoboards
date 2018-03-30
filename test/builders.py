@@ -2,10 +2,10 @@ from doublex import Stub, ANY_ARG
 
 from twoboards import TwoBoards
 from twoboards.client import Board, List, Card
-from trello import Checklist
+from trello import Checklist, Label
 
 
-def create_twoboards(data, pipeline=None):
+def create_twoboards(data, pre_pipeline=None, pipeline=None, post_pipeline=None):
     with Stub() as trello_client:
         # Avoid to retrieve the last_activity when building the board
         trello_client.fetch_json(ANY_ARG).returns({'_value': None})
@@ -18,6 +18,9 @@ def create_twoboards(data, pipeline=None):
             if 'checklists' in card_data and 'DoD' in card_data['checklists']:
                 dod = create_checklist(trello_client, card, 'DoD', card_data['checklists']['DoD'])
                 card.contained._checklists.append(dod)
+            if 'labels' in card_data:
+                for label in card_data['labels']:
+                    card.labels.append(create_label(trello_client, label))
             return card
 
         for list_name, list_data in data[board.name].items():
@@ -27,7 +30,7 @@ def create_twoboards(data, pipeline=None):
             for card_name in list_data:
                 list._cards.append(_create_card(list, card_name))
 
-    twoboards = TwoBoards(trello_client, pipeline=pipeline)
+    twoboards = TwoBoards(trello_client, pre_pipeline=pre_pipeline, pipeline=pipeline, post_pipeline=post_pipeline)
 
     twoboards._product_board = create_board(trello_client, 'product')
     twoboards._tech_board = create_board(trello_client, 'tech')
@@ -63,8 +66,6 @@ def create_list(board, name):
 
 
 def create_card(list, name, desc=None):
-    # TODO pending the creation of the labels
-    # labels = Label.from_json_list(card.board, json_obj['labels'])
     json_obj = {
         'id': 'a_card_id',
         'name': name,
@@ -86,6 +87,10 @@ def create_card(list, name, desc=None):
     card = Card.from_json(list, json_obj)
     card.contained._checklists = []
     return card
+
+
+def create_label(client, name):
+    return Label(client, 'a_label_id', name)
 
 
 def create_checklist(trello_client, card, name, items):
