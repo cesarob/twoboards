@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+*__pycache__*
+*.py[cod]
+
+# C extensions
+*.so
+
+# Mypy cache
+.mypy_cache/
+
+# VS Code
+.vscode/
+
+# JetBrains PyCharm
+.idea/
+
+.DS_Store
+tmp
+
+# Environment
+env*.sh
