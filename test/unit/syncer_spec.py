@@ -3,10 +3,6 @@ from test.builders import create_twoboards
 from twoboards.syncer import Syncer
 
 with description("TwoBoards Sync"):
-    with description('When a US is in Product board'):
-        with _it("has to have US label"):
-            # TODO
-            pass
 
     with description("Tasks creation in tech board"):
         with it("creates missing User stories in tech board"):

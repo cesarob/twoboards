@@ -52,6 +52,9 @@ class Syncer:
 
         if not dry_run:
             commands = self._apply_commands(commands)
+        else:
+            for command in commands:
+                logger.info('Applying command: {}'.format(json.dumps(command)))
 
         return commands
 
@@ -78,4 +81,6 @@ class Syncer:
 
     def _create_dod_task(self, command):
         list = self.twoboards.tech_board.get_list_by_name(command['task']['status'])
-        list.add_card(command['task']['name'])
+        card = list.add_card(command['task']['name'])
+        dod_label = self.twoboards.tech_board.get_dod_label()
+        card.add_label(dod_label)

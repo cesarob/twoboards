@@ -44,7 +44,7 @@ class Board(Wrapper):
 
     def add_label(self, name, color):
         if name not in self._get_labels():
-            label = super().add_label(name, color)
+            label = self.contained.add_label(name, color)
             self._labels[name] = label
         return self._labels[name]
 
