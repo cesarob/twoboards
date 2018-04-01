@@ -93,6 +93,16 @@ Product Board story gets updated with the changes of status in Tech Board.
 
 As it is useful to have Cards in Product Board that don't get synced to Tech Board just a set of labels are considered for User Stories (right now hard coded in the code: US and Issue).
 
+## Limitations and internals
+
+Limitations:
+- As I have mentioned all the changes in statuses should be done in Tech Board.
+- Titles of tasks in tech board cannot be changed as the sync is made using the title
+
+As syncs are done using User Stories if at some point you wish to break it, you just need to remove the label in the product board.
+
+Imaging for example you wish to place some cards in *Todo* but don't wish to sync them. You can do it just postponing the setting of the label till the last moment.
+
 
 # What could be next
 I have several minor things in mind that I am not enumerating here, but probably one interesting change would be to implement a two way sync, so instead
