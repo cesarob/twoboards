@@ -1,2 +1,2 @@
-from .twoboards import TwoBoards
+from .twoboards import TwoBoards, TwoBoardsClient
 from .syncer import Syncer

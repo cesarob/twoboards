@@ -1,8 +1,7 @@
 import sys
 import argparse
 
-from twoboards.client import TrelloClient
-from twoboards import TwoBoards
+from twoboards import TwoBoards, TwoBoardsClient
 from twoboards import Syncer
 from twoboards.cli.console import print_table
 from twoboards.config import API_KEY, TOKEN
@@ -86,7 +85,7 @@ def format_dod(dod):
 
 
 def create_cli():
-    client = TrelloClient(
+    client = TwoBoardsClient(
         api_key=API_KEY,
         api_secret=TOKEN
     )
@@ -125,7 +124,8 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(help='sub-command help')
 
     show_parser = subparsers.add_parser('show', help='Shows status')
-    show_parser.add_argument('target', default='pipeline', nargs='?', choices=['pre', 'post', 'pipeline', 'tech', 'product'],
+    show_parser.add_argument('target', default='pipeline', nargs='?',
+        choices=['pre', 'post', 'pipeline', 'tech', 'product'],
         help="Shows the tasks that are in the 'pipeline', or the ones that are outside the pipeline in 'tech' or " +
         "'product' boards")
     show_parser.set_defaults(func=show)

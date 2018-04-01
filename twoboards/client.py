@@ -23,6 +23,7 @@ class Board(Wrapper):
     def __init__(self, contained):
         super().__init__(contained)
         self._lists = None
+        self._labels = None
 
     def _get_lists(self):
         if self._lists is None:
@@ -33,6 +34,19 @@ class Board(Wrapper):
                 if not list.closed:
                     self._lists[list.name] = List(list)
         return self._lists
+
+    def _get_labels(self):
+        if self._labels is None:
+            self._labels = {}
+            for label in self.get_labels():
+                self._labels[label.name] = label
+        return self._labels
+
+    def add_label(self, name, color):
+        if name not in self._get_labels():
+            label = super().add_label(name, color)
+            self._labels[name] = label
+        return self._labels[name]
 
     def get_list(self, list_id):
         list = self.contained.get_list(list_id)

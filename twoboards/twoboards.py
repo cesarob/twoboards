@@ -1,21 +1,43 @@
 import sys
 from collections import defaultdict
 
+from .client import Board, TrelloClient
+
 from .config import (
     PRODUCT_BOARD_ID,
     TECH_BOARD_ID,
     PIPELINE,
     PRE_PIPELINE,
-    POST_PIPELINE
+    POST_PIPELINE,
+    LABEL_DOD,
+    LABEL_COLOR
 )
+
 from .syncer import Syncer
 
 BOARD_PIPELINE = PRE_PIPELINE + PIPELINE + POST_PIPELINE
 BOAD_PIPELINE = ['Doing']
 
 
+class TechBoard(Board):
+    def get_dod_label(self):
+        if LABEL_DOD not in self._get_labels():
+            label = self.add_label(LABEL_DOD, LABEL_COLOR)
+        return self._labels[LABEL_DOD]
+
+
+class TwoBoardsClient(TrelloClient):
+
+    def get_product_board(self):
+        return self.get_board(PRODUCT_BOARD_ID)
+
+    def get_tech_board(self):
+        board = super().get_board(TECH_BOARD_ID)
+        return TechBoard(board)
+
+
 class TwoBoards:
-    def __init__(self, client, pre_pipeline=None, pipeline=None, post_pipeline=None):
+    def __init__(self, client: TwoBoardsClient, pre_pipeline=None, pipeline=None, post_pipeline=None):
         self.client = client
         self.pre_pipeline = pre_pipeline if pre_pipeline else PRE_PIPELINE
         self.pipeline = pipeline if pipeline else PIPELINE
@@ -30,8 +52,8 @@ class TwoBoards:
         self.syncer = Syncer(self.client)
 
     def _init_boards(self):
-        self._product_board = self.client.get_board(PRODUCT_BOARD_ID)
-        self._tech_board = self.client.get_board(TECH_BOARD_ID)
+        self._product_board = self.client.get_product_board()
+        self._tech_board = self.client.get_tech_board()
 
         if self._tech_board is None:
             raise Exception("Tech board not found. Id: {}".format(TECH_BOARD_ID))

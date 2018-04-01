@@ -16,3 +16,7 @@ TECH_BOARD_ID = os.environ['TECH_BOARD_ID']
 PRE_PIPELINE = get_list('PRE_PIPELINE')
 PIPELINE = get_list('PIPELINE')
 POST_PIPELINE = get_list('POST_PIPELINE')
+
+LABEL_US = 'US'
+LABEL_DOD = 'DoD'
+LABEL_COLOR = 'purple'
