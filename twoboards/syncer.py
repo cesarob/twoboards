@@ -34,6 +34,7 @@ class Syncer:
                             'user_story': {
                                 'name': user_story['name'],
                                 'id': user_story['id'],
+                                'actual_status': status,
                                 'status': user_story['error']['required'],
                             }
                         })
