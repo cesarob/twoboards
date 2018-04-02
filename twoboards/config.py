@@ -20,3 +20,5 @@ POST_PIPELINE = get_list('POST_PIPELINE')
 LABEL_US = 'US'
 LABEL_DOD = 'DoD'
 LABEL_COLOR = 'purple'
+
+USER_STORY_LABELS = ['US', 'Issue']

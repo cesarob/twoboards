@@ -1,8 +1,6 @@
 import sys
 from collections import defaultdict
 
-from .client import Board, TrelloClient
-
 from .config import (
     PRODUCT_BOARD_ID,
     TECH_BOARD_ID,
@@ -19,25 +17,8 @@ BOARD_PIPELINE = PRE_PIPELINE + PIPELINE + POST_PIPELINE
 BOAD_PIPELINE = ['Doing']
 
 
-class TechBoard(Board):
-    def get_dod_label(self):
-        if LABEL_DOD not in self._get_labels():
-            label = self.add_label(LABEL_DOD, LABEL_COLOR)
-        return self._labels[LABEL_DOD]
-
-
-class TwoBoardsClient(TrelloClient):
-
-    def get_product_board(self):
-        return self.get_board(PRODUCT_BOARD_ID)
-
-    def get_tech_board(self):
-        board = super().get_board(TECH_BOARD_ID)
-        return TechBoard(board)
-
-
 class TwoBoards:
-    def __init__(self, client: TwoBoardsClient, pre_pipeline=None, pipeline=None, post_pipeline=None):
+    def __init__(self, client, pre_pipeline=None, pipeline=None, post_pipeline=None):
         self.client = client
         self.pre_pipeline = pre_pipeline if pre_pipeline else PRE_PIPELINE
         self.pipeline = pipeline if pipeline else PIPELINE
@@ -95,10 +76,17 @@ class TwoBoards:
         return self._tech_lists
 
     def get_user_stories_by_status(self, status):
+        user_stories = []
+        for card in self.get_product_cards_by_status(status):
+            if card.is_user_story:
+                user_stories.append(card)
+        return user_stories
+
+    def get_product_cards_by_status(self, status):
         column = self.product_lists[status]
         return column.get_cards()
 
-    def get_tech_tasks_by_status(self, status):
+    def get_tech_cards_by_status(self, status):
         column = self.tech_lists[status]
         return column.get_cards()
 
@@ -147,7 +135,7 @@ class TwoBoards:
         result = {}
         for status in self.pipeline:
             result[status] = []
-            for card in self.get_tech_tasks_by_status(status):
+            for card in self.get_tech_cards_by_status(status):
                 labels = [label.name for label in card.labels]
                 if not ('DoD' in labels or 'US' in labels or 'Issue' in labels):
                     result[status].append({
@@ -160,12 +148,11 @@ class TwoBoards:
         result = {}
         for status in self.pipeline:
             result[status] = []
-            for card in self.get_user_stories_by_status(status):
-                labels = [label.name for label in card.labels]
-                if not ('US' in labels or 'Issue' in labels):
+            for card in self.get_product_cards_by_status(status):
+                if not card.is_user_story:
                     result[status].append({
                         'name': card.name,
-                        'labels': labels
+                        'labels': [label.name for label in card.labels]
                     })
         return result
 
@@ -173,11 +160,11 @@ class TwoBoards:
         result = {}
         for status in self.pre_pipeline:
             result[status] = []
-            for card in self.get_user_stories_by_status(status):
+            for card in self.get_product_cards_by_status(status):
                 labels = [label.name for label in card.labels]
                 result[status].append({
                     'name': card.name,
-                    'labels': labels
+                    'labels': [label.name for label in card.labels]
                 })
         return result
 
@@ -185,11 +172,10 @@ class TwoBoards:
         result = {}
         for status in self.post_pipeline:
             result[status] = []
-            for card in self.get_user_stories_by_status(status):
-                labels = [label.name for label in card.labels]
+            for card in self.get_product_cards_by_status(status):
                 result[status].append({
                     'name': card.name,
-                    'labels': labels
+                    'labels': [label.name for label in card.labels]
                 })
         return result
 

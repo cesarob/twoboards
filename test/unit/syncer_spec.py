@@ -9,7 +9,7 @@ with description("TwoBoards Sync"):
             data = {
                 'product': {
                     'Todo': {
-                        'card1': {},
+                        'card1': {'labels': ['US']},
                     }
                 },
                 'tech': {
@@ -32,6 +32,7 @@ with description("TwoBoards Sync"):
                 'product': {
                     'Todo': {
                         'card1': {
+                            'labels': ['US'],
                             'checklists': {
                                 'DoD': ['Task1', 'Task2']
                             }
@@ -60,14 +61,14 @@ with description("TwoBoards Sync"):
             data = {
                 'product': {
                     'Todo': {
-                        'card1': {},
+                        'card1': {'labels': ['US']},
                     },
                     'Doing': {}
                 },
                 'tech': {
                     'Todo': {},
                     'Doing': {
-                        'card1': {},
+                        'card1': {'labels': ['US']},
                     }
                 }
             }
@@ -87,6 +88,7 @@ with description("TwoBoards Sync"):
                 'product': {
                     'Todo': {
                         'card1': {
+                            'labels': ['US'],
                             'checklists': {
                                 'DoD': ['Task1', 'Task2']
                             }

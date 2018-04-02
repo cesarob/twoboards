@@ -3,9 +3,7 @@ from trello import Board as _Board
 from trello import Card as _Card
 from trello import List as _List
 
-# TODO
-#   - till the inclusion of get_defintion_of_done in the Card this classes were
-#     very generic. Should we introduce a UserStory card? propably yes
+import twoboards.config as config
 
 
 class Wrapper:
@@ -76,6 +74,13 @@ class Board(Wrapper):
         return Board(_Board.from_json(trello_client=trello_client, organization=organization, json_obj=json_obj))
 
 
+class TechBoard(Board):
+    def get_dod_label(self):
+        if config.LABEL_DOD not in self._get_labels():
+            label = self.add_label(config.LABEL_DOD, config.LABEL_COLOR)
+        return self._labels[config.LABEL_DOD]
+
+
 class List(Wrapper):
     def __init__(self, contained):
         super().__init__(contained)
@@ -135,6 +140,14 @@ class Card(Wrapper):
                         return checklist.items
         return []
 
+    @property
+    def is_user_story(self):
+        for label in self.contained.labels:
+            if label.name in config.USER_STORY_LABELS:
+                return True
+        return False
+
+
     @classmethod
     def from_json(cls, parent, json_obj):
         return Card(_Card.from_json(parent, json_obj))
@@ -160,3 +173,10 @@ class TrelloClient(Client):
     def get_board(self, board_id):
         board = super().get_board(board_id)
         return Board(board)
+
+    def get_product_board(self):
+        return self.get_board(config.PRODUCT_BOARD_ID)
+
+    def get_tech_board(self):
+        board = super().get_board(config.TECH_BOARD_ID)
+        return TechBoard(board)

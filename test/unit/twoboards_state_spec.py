@@ -7,7 +7,7 @@ with description("TwoBoards State"):
             data = {
                 'product': {
                     'Todo': {
-                        '1st_card': {},
+                        '1st_card': {'labels': ['US']},
                     }
                 },
                 'tech': {}
@@ -25,6 +25,7 @@ with description("TwoBoards State"):
                 'product': {
                     'Todo': {
                         '1st_card': {
+                            'labels': ['US'],
                             'checklists': {
                                 'DoD': ['Task1', 'Task2']
                             }
@@ -123,13 +124,13 @@ with description("TwoBoards State"):
             data = {
                 'product': {
                     'Todo': {
-                        '1st_card': {},
-                        '2nd_card': {}
+                        '1st_card': {'labels': ['US']},
+                        '2nd_card': {'labels': ['US']}
                     }
                 },
                 'tech': {
                     'Todo': {
-                        '1st_card': {},
+                        '1st_card': {'labels': ['US']},
                     }
                 }
             }
@@ -142,18 +143,18 @@ with description("TwoBoards State"):
             data = {
                 'product': {
                     'Todo': {
-                        '1st_card': {},
-                        '2nd_card': {}
+                        '1st_card': {'labels': ['US']},
+                        '2nd_card': {'labels': ['US']}
                     },
                     'Doing': {
                     }
                 },
                 'tech': {
                     'Todo': {
-                        '1st_card': {},
+                        '1st_card': {'labels': ['US']},
                     },
                     'Doing': {
-                        '2nd_card': {}
+                        '2nd_card': {'labels': ['US']}
                     }
                 }
             }
@@ -170,6 +171,7 @@ with description("TwoBoards State"):
                 'product': {
                     'Todo': {
                         'card1': {
+                            'labels': ['US'],
                             'checklists': {
                                 'DoD': ['Task1']
                             }
@@ -178,7 +180,7 @@ with description("TwoBoards State"):
                 },
                 'tech': {
                     'Todo': {
-                        'card1': {},
+                        'card1': {'labels': ['US']},
                     }
                 }
             }
@@ -192,6 +194,7 @@ with description("TwoBoards State"):
                 'product': {
                     'Todo': {
                         '1st_card': {
+                            'labels': ['US'],
                             'checklists': {
                                 'DoD': ['Task1', 'Task2']
                             }
@@ -215,6 +218,7 @@ with description("TwoBoards State"):
                 'product': {
                     'Todo': {
                         '1st_card': {
+                            'labels': ['US'],
                             'checklists': {
                                 'DoD': ['Task1', 'Task2']
                             }
