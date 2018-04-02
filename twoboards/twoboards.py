@@ -197,7 +197,7 @@ class TwoBoards:
             # TODO hardcoded for my actual statuses
             #      I need to thing if we can implement a general algorith. If no we just force this statuses
             #      and we just allow to have pre and post pipeline statuses but not the one in the pipeline
-            pos_tasks = {'Todo': 0, 'Doing': 0, 'OnHold': 0, 'Done': 0}
+            pos_tasks = {'Todo': 0, 'Doing': 0, 'OnHold': 0, 'Acceptance': 0, 'Done': 0}
 
             for task in user_story['dod']:
                 if task['state'] == 'missing':
@@ -218,6 +218,8 @@ class TwoBoards:
                     if num == len(user_story['dod']):
                         required_status = task_status
                         break
+                if required_status is None:
+                    required_status = 'Doing'
                 if required_status != status:
                     return {
                         'type': 'wrong_status',
