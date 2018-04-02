@@ -5,7 +5,7 @@ from twoboards import TwoBoards
 from twoboards.client import TrelloClient
 from twoboards import Syncer
 from twoboards.cli.console import print_table
-from twoboards.config import API_KEY, TOKEN
+import config
 from twoboards.cli.color import green, colorize_row, red
 
 
@@ -87,10 +87,15 @@ def format_dod(dod):
 
 def create_cli():
     client = TrelloClient(
-        api_key=API_KEY,
-        api_secret=TOKEN
+        config.PRODUCT_BOARD_ID,
+        config.TECH_BOARD_ID,
+        api_key=config.API_KEY,
+        api_secret=config.TOKEN
     )
-    twoboards = TwoBoards(client)
+    twoboards = TwoBoards(client,
+        pipeline=config.PIPELINE,
+        pre_pipeline=config.PRE_PIPELINE,
+        post_pipeline=config.POST_PIPELINE)
     return TwoBoardsCli(twoboards, Syncer(twoboards))
 
 

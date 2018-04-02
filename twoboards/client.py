@@ -3,7 +3,10 @@ from trello import Board as _Board
 from trello import Card as _Card
 from trello import List as _List
 
-import twoboards.config as config
+LABEL_DOD = 'DoD'
+LABEL_COLOR = 'purple'
+
+USER_STORY_LABELS = ['US', 'Issue']
 
 
 class Wrapper:
@@ -76,9 +79,9 @@ class Board(Wrapper):
 
 class TechBoard(Board):
     def get_dod_label(self):
-        if config.LABEL_DOD not in self._get_labels():
-            label = self.add_label(config.LABEL_DOD, config.LABEL_COLOR)
-        return self._labels[config.LABEL_DOD]
+        if LABEL_DOD not in self._get_labels():
+            label = self.add_label(LABEL_DOD, LABEL_COLOR)
+        return self._labels[LABEL_DOD]
 
 
 class List(Wrapper):
@@ -143,10 +146,9 @@ class Card(Wrapper):
     @property
     def is_user_story(self):
         for label in self.contained.labels:
-            if label.name in config.USER_STORY_LABELS:
+            if label.name in USER_STORY_LABELS:
                 return True
         return False
-
 
     @classmethod
     def from_json(cls, parent, json_obj):
@@ -154,8 +156,10 @@ class Card(Wrapper):
 
 
 class TrelloClient(Client):
-    def __init__(self, api_key, api_secret=None, token=None, token_secret=None):
+    def __init__(self, product_board_id, tech_board_id, api_key, api_secret=None, token=None, token_secret=None):
         super().__init__(api_key, api_secret, token, token_secret)
+        self.product_board_id = product_board_id
+        self.tech_board_id = tech_board_id
         self._boards = None
 
     def _get_boards(self):
@@ -175,8 +179,8 @@ class TrelloClient(Client):
         return Board(board)
 
     def get_product_board(self):
-        return self.get_board(config.PRODUCT_BOARD_ID)
+        return self.get_board(self.product_board_id)
 
     def get_tech_board(self):
-        board = super().get_board(config.TECH_BOARD_ID)
+        board = super().get_board(self.tech_board_id)
         return TechBoard(board)

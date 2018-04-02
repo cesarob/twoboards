@@ -1,30 +1,18 @@
 import sys
 from collections import defaultdict
 
-from .config import (
-    PRODUCT_BOARD_ID,
-    TECH_BOARD_ID,
-    PIPELINE,
-    PRE_PIPELINE,
-    POST_PIPELINE,
-    LABEL_DOD,
-    LABEL_COLOR
-)
-
 from .syncer import Syncer
-
-BOARD_PIPELINE = PRE_PIPELINE + PIPELINE + POST_PIPELINE
-BOAD_PIPELINE = ['Doing']
 
 
 class TwoBoards:
-    def __init__(self, client, pre_pipeline=None, pipeline=None, post_pipeline=None):
+    def __init__(self, client, pipeline, pre_pipeline=None, post_pipeline=None):
         self.client = client
-        self.pre_pipeline = pre_pipeline if pre_pipeline else PRE_PIPELINE
-        self.pipeline = pipeline if pipeline else PIPELINE
-        self.post_pipeline = post_pipeline if post_pipeline else POST_PIPELINE
 
+        self.pipeline = pipeline
+        self.pre_pipeline = pre_pipeline if pre_pipeline else []
+        self.post_pipeline = post_pipeline if post_pipeline else []
         self.full_pipeline = self.pre_pipeline + self.pipeline + self.post_pipeline
+
         self._product_board = None
         self._tech_board = None
         self._product_lists = None

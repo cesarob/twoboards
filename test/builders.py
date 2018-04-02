@@ -30,7 +30,7 @@ def create_twoboards(data, pre_pipeline=None, pipeline=None, post_pipeline=None)
             for card_name in list_data:
                 list._cards.append(_create_card(list, card_name))
 
-    twoboards = TwoBoards(trello_client, pre_pipeline=pre_pipeline, pipeline=pipeline, post_pipeline=post_pipeline)
+    twoboards = TwoBoards(trello_client, pipeline, pre_pipeline=pre_pipeline, post_pipeline=post_pipeline)
 
     twoboards._product_board = create_board(trello_client, 'product')
     twoboards._tech_board = create_board(trello_client, 'tech')
