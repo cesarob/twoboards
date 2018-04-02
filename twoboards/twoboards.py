@@ -105,7 +105,7 @@ class TwoBoards:
         for tech_status in self.pipeline:
             if tech_status in self.tech_lists:
                 for card in self.tech_lists[tech_status].get_cards():
-                    if card.name == name:
+                    if card.name.find(name) != -1:
                         found = card
                         break
                 if found:
@@ -122,7 +122,7 @@ class TwoBoards:
         for tech_status in self.pipeline:
             if tech_status in self.tech_lists:
                 for card in self.tech_lists[tech_status].get_cards():
-                    if card.name == name:
+                    if card.name.find(name) != -1:
                         found = card
                         break
                 if found:
