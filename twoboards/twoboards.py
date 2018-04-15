@@ -103,7 +103,7 @@ class TwoBoards:
 
         return 'missing' if found is None else tech_status
 
-    def _check_dod_task_in_tech(self, status, name):
+    def _check_dod_task_in_tech(self, name):
         # TODO
         #   - refactor as it is a similar implementation than _check_user_story_in_tech
         found = None
@@ -142,6 +142,28 @@ class TwoBoards:
                         'name': card.name,
                         'labels': [label.name for label in card.labels]
                     })
+        return result
+
+    def get_user_stories_without_updated_dod_task(self):
+        result = []
+        for status in self.pipeline:
+            for card in self.get_product_cards_by_status(status):
+                if card.is_user_story and card.definition_of_done:
+                    for item in card.definition_of_done:
+                        status = self._check_dod_task_in_tech(item['name'])
+                        if status == 'Done':
+                            if item['state'] == 'incomplete':
+                                result.append({
+                                    'name': card.name,
+                                    'task': item['name'],
+                                    'expected_state': 'complete'
+                                })
+                        elif item['state'] == 'complete':
+                            result.append({
+                                'name': card.name,
+                                'task': item['name'],
+                                'expected_state': 'incomplete'
+                            })
         return result
 
     def get_pre_pipeline_state(self):
@@ -230,7 +252,7 @@ class TwoBoards:
                     for task in card.definition_of_done:
                         user_story['dod'].append({
                             'name': task['name'],
-                            'state': self._check_dod_task_in_tech(status, task['name'])
+                            'state': self._check_dod_task_in_tech(task['name'])
                         })
                     user_story['error'] = dod_error(status, user_story)
                 else:

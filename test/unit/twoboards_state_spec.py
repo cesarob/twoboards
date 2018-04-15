@@ -166,7 +166,7 @@ with description("TwoBoards State"):
             )
 
     with description('DoD management'):
-        with it("manages DoD with one element as a normal User Story"):
+        with it("considers DoD with one element as a normal User Story"):
             data = {
                 'product': {
                     'Todo': {
@@ -235,3 +235,28 @@ with description("TwoBoards State"):
             expect(state['Todo'][0]['error']).to(have_keys(
                 {'type': 'missing_dod_tasks', 'tasks': ['Task1', 'Task2']}
             ))
+
+    with description('Inconsistent User Story info'):
+        with it('report user stories with non updated DoD tasks'):
+            data = {
+                'product': {
+                    'Todo': {
+                        'card1': {
+                            'labels': ['US'],
+                            'checklists': {
+                                'DoD': ['Task1', 'Task2']
+                            }
+                        },
+                    },
+                    'Doing': {},
+                    'Done': {},
+                },
+                'tech': {
+                    'Todo': {},
+                    'Doing': {},
+                    'Done': {'Task1': {}}
+                }
+            }
+            twoboards = create_twoboards(data, pipeline=['Todo', 'Doing', 'Done'])
+            result = twoboards.get_user_stories_without_updated_dod_task()
+            expect(result[0]).to(have_keys({'name': 'card1', 'task': 'Task1', 'expected_state': 'complete'}))
