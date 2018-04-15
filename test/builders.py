@@ -1,15 +1,28 @@
-from doublex import Spy
+from doublex import Spy, ANY_ARG
 from hamcrest import ends_with
 
 from twoboards import TwoBoards
-from twoboards.client import Board, List, Card
-from trello import Checklist, Label
+from twoboards.client import TwoBoardsTrelloClient, Board, List, Card
+from trello import Checklist, Label, TrelloClient
 
 
 def create_twoboards(data, pre_pipeline=None, pipeline=None, post_pipeline=None):
-    with Spy() as trello_client:
+    class FakeHttpResponse:
+
+        def __init__(self, status_code, data='', headers=[]):
+            self.status_code = status_code
+            self.headers = headers
+            self.data = data.encode(encoding='UTF-8', errors='strict')
+
+        def json(self):
+            return {'_value': None}
+
+    with Spy() as http_service:
         # Avoid to retrieve the last_activity when building the board
-        trello_client.fetch_json(ends_with('dateLastActivity')).returns({'_value': None})
+        http_service.request('GET', ends_with('dateLastActivity'), ANY_ARG).returns(FakeHttpResponse(200))
+
+    trello_client = TrelloClient(api_key='an_api_key', token='a_token', http_service=http_service)
+    twoboards_client = TwoBoardsTrelloClient(trello_client, 'a_product_board_id', 'a_tech_board_id')
 
     def _populate_twoboard_lists(board, list_atribute):
 
@@ -17,11 +30,11 @@ def create_twoboards(data, pre_pipeline=None, pipeline=None, post_pipeline=None)
             card = create_card(list, card_name)
             card_data = data[board.name][list.name][card_name]
             if 'checklists' in card_data and 'DoD' in card_data['checklists']:
-                dod = create_checklist(trello_client, card, 'DoD', card_data['checklists']['DoD'])
+                dod = create_checklist(twoboards_client, card, 'DoD', card_data['checklists']['DoD'])
                 card.contained._checklists.append(dod)
             if 'labels' in card_data:
                 for label in card_data['labels']:
-                    card.labels.append(create_label(trello_client, label))
+                    card.labels.append(create_label(twoboards_client, label))
             return card
 
         for list_name, list_data in data[board.name].items():
@@ -31,10 +44,10 @@ def create_twoboards(data, pre_pipeline=None, pipeline=None, post_pipeline=None)
             for card_name in list_data:
                 list._cards.append(_create_card(list, card_name))
 
-    twoboards = TwoBoards(trello_client, pipeline, pre_pipeline=pre_pipeline, post_pipeline=post_pipeline)
+    twoboards = TwoBoards(twoboards_client, pipeline, pre_pipeline=pre_pipeline, post_pipeline=post_pipeline)
 
-    twoboards._product_board = create_board(trello_client, 'product')
-    twoboards._tech_board = create_board(trello_client, 'tech')
+    twoboards._product_board = create_board(twoboards_client, 'product')
+    twoboards._tech_board = create_board(twoboards_client, 'tech')
 
     twoboards._product_lists = {}
     _populate_twoboard_lists(twoboards._product_board, twoboards._product_lists)
