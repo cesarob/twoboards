@@ -119,7 +119,7 @@ class TwoBoards:
                 break
         return 'missing' if found is None else tech_status
 
-    def get_tech_orphan_tasks(self):
+    def get_tech_orphan_tasks_report(self):
         result = {}
         for status in self.pipeline:
             result[status] = []
@@ -132,7 +132,7 @@ class TwoBoards:
                     })
         return result
 
-    def get_product_not_user_stories_tasks(self):
+    def get_product_not_user_stories_tasks_report(self):
         result = {}
         for status in self.pipeline:
             result[status] = []
@@ -144,7 +144,7 @@ class TwoBoards:
                     })
         return result
 
-    def get_user_stories_without_updated_dod_task(self):
+    def get_user_stories_without_updated_dod_task_report(self):
         result = []
         for status in self.pipeline:
             for card in self.get_product_cards_by_status(status):
@@ -154,19 +154,26 @@ class TwoBoards:
                         if status == 'Done':
                             if item['state'] == 'incomplete':
                                 result.append({
-                                    'name': card.name,
+                                    'user_story': {
+                                        'name': card.name,
+                                        'id': card.id
+                                    },
                                     'task': item['name'],
                                     'expected_state': 'complete'
                                 })
                         elif item['state'] == 'complete':
                             result.append({
-                                'name': card.name,
+                                'user_story': {
+                                    'name': card.name,
+                                    'id': card.id
+                                },
                                 'task': item['name'],
                                 'expected_state': 'incomplete'
                             })
         return result
 
     def get_pre_pipeline_state(self):
+        """Report with cards of the pre pipeline"""
         result = {}
         for status in self.pre_pipeline:
             result[status] = []
@@ -179,6 +186,7 @@ class TwoBoards:
         return result
 
     def get_post_pipeline_state(self):
+        """Report with cards of the post pipeline"""
         result = {}
         for status in self.post_pipeline:
             result[status] = []
@@ -190,6 +198,7 @@ class TwoBoards:
         return result
 
     def get_user_stories_state(self):
+        """Report with the status of the user stories"""
         def us_error(status, tech_state):
             if tech_state == 'missing':
                 return {'type': 'missing'}

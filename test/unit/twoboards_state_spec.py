@@ -62,7 +62,7 @@ with description("TwoBoards State"):
                 }
             }
             twoboards = create_twoboards(data, pipeline=['Todo'])
-            non_us_tasks = twoboards.get_product_not_user_stories_tasks()
+            non_us_tasks = twoboards.get_product_not_user_stories_tasks_report()
             expect(non_us_tasks['Todo']).to(be_a(list))
             expect(non_us_tasks['Todo']).to(have_len(1))
             expect(non_us_tasks['Todo'][0]['name']).to(equal('card2'))
@@ -79,7 +79,7 @@ with description("TwoBoards State"):
                 }
             }
             twoboards = create_twoboards(data, pipeline=['Todo'])
-            orphan_tasks = twoboards.get_tech_orphan_tasks()
+            orphan_tasks = twoboards.get_tech_orphan_tasks_report()
             expect(orphan_tasks['Todo']).to(be_a(list))
             expect(orphan_tasks['Todo']).to(have_len(1))
             expect(orphan_tasks['Todo'][0]['name']).to(equal('card1'))
@@ -258,5 +258,9 @@ with description("TwoBoards State"):
                 }
             }
             twoboards = create_twoboards(data, pipeline=['Todo', 'Doing', 'Done'])
-            result = twoboards.get_user_stories_without_updated_dod_task()
-            expect(result[0]).to(have_keys({'name': 'card1', 'task': 'Task1', 'expected_state': 'complete'}))
+            result = twoboards.get_user_stories_without_updated_dod_task_report()
+            expect(result[0]).to(have_keys({
+                'user_story': have_keys({'name': 'card1'}),
+                'task': 'Task1',
+                'expected_state': 'complete'
+            }))

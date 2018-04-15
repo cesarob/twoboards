@@ -39,10 +39,10 @@ class TwoBoardsCli:
         self._show_board(self.twoboards.get_post_pipeline_state)
 
     def show_tech(self):
-        self._show_board(self.twoboards.get_tech_orphan_tasks)
+        self._show_board(self.twoboards.get_tech_orphan_tasks_report)
 
     def show_prod(self):
-        self._show_board(self.twoboards.get_product_not_user_stories_tasks)
+        self._show_board(self.twoboards.get_product_not_user_stories_tasks_report)
 
     def _show_board(self, callable):
         print()
