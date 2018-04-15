@@ -1,4 +1,3 @@
-from trello import TrelloClient as Client
 from trello import Board as _Board
 from trello import Card as _Card
 from trello import List as _List
@@ -10,6 +9,10 @@ USER_STORY_LABELS = ['US', 'Issue']
 
 
 class Wrapper:
+    """Allows to tune wrapped classes
+
+    Non defined methods are proxixed to contained instance
+    """
     def __init__(self, contained):
         self.contained = contained
 
@@ -155,16 +158,18 @@ class Card(Wrapper):
         return Card(_Card.from_json(parent, json_obj))
 
 
-class TrelloClient(Client):
-    def __init__(self, product_board_id, tech_board_id, api_key, api_secret=None, token=None, token_secret=None):
-        super().__init__(api_key, api_secret, token, token_secret)
+class TwoBoardsTrelloClient(Wrapper):
+    """Tuned version of TrelloClient for TwoBoards"""
+
+    def __init__(self, trello_client, product_board_id, tech_board_id):
+        super().__init__(trello_client)
         self.product_board_id = product_board_id
         self.tech_board_id = tech_board_id
         self._boards = None
 
     def _get_boards(self):
         if self._boards is None:
-            self._boards = self.list_boards()
+            self._boards = self.contained.list_boards()
         return self._boards
 
     def get_board_by_name(self, name):
@@ -175,12 +180,12 @@ class TrelloClient(Client):
         return None
 
     def get_board(self, board_id):
-        board = super().get_board(board_id)
+        board = self.contained.get_board(board_id)
         return Board(board)
 
     def get_product_board(self):
         return self.get_board(self.product_board_id)
 
     def get_tech_board(self):
-        board = super().get_board(self.tech_board_id)
+        board = self.get_board(self.tech_board_id)
         return TechBoard(board)

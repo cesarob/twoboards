@@ -1,8 +1,9 @@
 import sys
 import argparse
 
+from trello import TrelloClient
 from twoboards import TwoBoards
-from twoboards.client import TrelloClient
+from twoboards.client import TwoBoardsTrelloClient
 from twoboards import Syncer
 from twoboards.cli.console import print_table
 import config
@@ -86,11 +87,14 @@ def format_dod(dod):
 
 
 def create_cli():
-    client = TrelloClient(
-        config.PRODUCT_BOARD_ID,
-        config.TECH_BOARD_ID,
+    trello_client = TrelloClient(
         api_key=config.API_KEY,
         api_secret=config.TOKEN
+    )
+    client = TwoBoardsTrelloClient(
+        trello_client,
+        config.PRODUCT_BOARD_ID,
+        config.TECH_BOARD_ID,
     )
     twoboards = TwoBoards(client,
         pipeline=config.PIPELINE,
