@@ -103,6 +103,12 @@ class List(Wrapper):
     def get_cards(self):
         return self._get_cards()
 
+    def get_card_by_name(self, name):
+        for card in self._get_cards():
+            if card.name == name:
+                return card
+        return None
+
     def copy_card(self, idCard):
         """Copies a card into the list
 
@@ -182,6 +188,14 @@ class TwoBoardsTrelloClient(Wrapper):
     def get_board(self, board_id):
         board = self.contained.get_board(board_id)
         return Board(board)
+
+    def get_card(self, card_id):
+        card = self.contained.get_card(card_id)
+        return Card(card)
+
+    def get_list(self, list_id):
+        trellolist = self.contained.get_list(list_id)
+        return List(trellolist)
 
     def get_product_board(self):
         return self.get_board(self.product_board_id)

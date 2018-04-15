@@ -1,5 +1,8 @@
 from expects import *
+from doublex import ANY_ARG
+from hamcrest import ends_with
 from test.builders import create_twoboards
+
 from twoboards.syncer import Syncer
 
 with description("TwoBoards Sync"):
@@ -138,9 +141,10 @@ with description("TwoBoards Sync"):
                     'Done': {'Task1': {}}
                 }
             }
-            syncer = Syncer(create_twoboards(data, pipeline=['Todo', 'Doing', 'Done']))
+            twoboards = create_twoboards(data, pipeline=['Todo', 'Doing', 'Done'])
+            syncer = Syncer(twoboards)
 
-            commands = syncer.sync(dry_run=True)
+            commands = syncer.sync()
 
             expect(commands).to(have_len(1))
             expect(commands[0]).to(have_keys({

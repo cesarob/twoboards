@@ -10,7 +10,9 @@ with description("TwoBoards State"):
                         '1st_card': {'labels': ['US']},
                     }
                 },
-                'tech': {}
+                'tech': {
+                    'Todo': {}
+                }
             }
             twoboards = create_twoboards(data, pipeline=['Todo'])
 
@@ -32,7 +34,9 @@ with description("TwoBoards State"):
                         }
                     }
                 },
-                'tech': {}
+                'tech': {
+                    'Todo': {}
+                }
             }
             twoboards = create_twoboards(data, pipeline=['Todo'])
 

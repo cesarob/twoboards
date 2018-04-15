@@ -32,7 +32,7 @@ class TwoBoards:
 
     def _init_lists(self, board):
         result = {}
-        for name in self.pipeline:
+        for name in self.full_pipeline:
             column = board.get_list_by_name(name)
             if column is None:
                 raise Exception("List {} not found in board".format(name, board.name))
