@@ -1,5 +1,6 @@
 from expects import *
 from doublex import ANY_ARG
+from doublex_expects import *
 from hamcrest import ends_with
 from test.builders import create_twoboards
 
@@ -153,3 +154,6 @@ with description("TwoBoards Sync"):
                 'task': 'Task1',
                 'expected_state': 'complete',
             }))
+
+            http_service = twoboards.client.http_service
+            expect(http_service.request).to(have_been_called_with('PUT', contain('cards', 'checklist', 'checkItem')))

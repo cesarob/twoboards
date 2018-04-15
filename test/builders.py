@@ -47,8 +47,14 @@ def create_twoboards(data, pre_pipeline=None, pipeline=None, post_pipeline=None)
             card = create_card(list, card_name)
             card_data = data[board.name][list.name][card_name]
             if 'checklists' in card_data and 'DoD' in card_data['checklists']:
-                dod = create_checklist(twoboards_client, card, 'DoD', card_data['checklists']['DoD'])
+                dod, json_obj = create_checklist(twoboards_client, card, 'DoD', card_data['checklists']['DoD'])
                 card.contained._checklists.append(dod)
+
+                http_service = board.client.http_service
+                with http_service:
+                    http_service.request('GET', ends_with('cards/{}/checklists'.format(card.id)), ANY_ARG).returns(
+                        HttpStubResponse(json.dumps([json_obj]))
+                    )
             if 'labels' in card_data:
                 for label in card_data['labels']:
                     card.labels.append(create_label(twoboards_client, label))
@@ -153,9 +159,9 @@ def create_label(client, name):
 
 def create_checklist(trello_client, card, name, items):
     checked = False
-    id = 'id_' + name
+    checklist_id = 'id_' + name
     json_obj = {
-        'id': id,
+        'id': checklist_id,
         'name': name,
         'idBoard': card.board.id,
         'idCard': card.id,
@@ -163,20 +169,25 @@ def create_checklist(trello_client, card, name, items):
         'checkItems': []
     }
     for item_name in items:
-        json_obj['checkItems'].append({
+        item_id = 'id_' + item_name
+        item = {
             'state': 'incomplete',
-            'idChecklist': id,
-            'id': 'id_' + item_name,
+            'idChecklist': checklist_id,
+            'id': item_id,
             'name': item_name,
             'nameData': None,
             'pos': 0
-        })
+        }
+        json_obj['checkItems'].append(item)
+        http_service = card.client.http_service
+        with http_service:
+            http_service.request('PUT',
+                ends_with('cards/{card_id}/checklist/{checklist_id}/checkItem/{item_id}'.format(
+                    card_id=card.id,
+                    checklist_id=checklist_id,
+                    item_id=item_id,
+                )), ANY_ARG).returns(
+                    HttpStubResponse(json.dumps(item))
+                )
 
-    # We can do it here as we are just creating a checklist, the DoD
-    http_service = card.client.http_service
-    with http_service:
-        http_service.request('GET', ends_with('cards/id_card1/checklists'.format(card.id)), ANY_ARG).returns(
-            HttpStubResponse(json.dumps([json_obj]))
-        )
-
-    return Checklist(trello_client, [], json_obj, trello_card=card.id)
+    return Checklist(trello_client, [], json_obj, trello_card=card.id), json_obj
