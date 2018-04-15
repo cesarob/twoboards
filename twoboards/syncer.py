@@ -12,6 +12,28 @@ class Syncer:
 
         :return: The applied commands
         """
+        commands = self._get_state_commands()
+        commands += self._get_user_story_update_commands()
+        if not dry_run:
+            commands = self._apply_commands(commands)
+        else:
+            for command in commands:
+                logger.info('Applying command: {}'.format(json.dumps(command)))
+
+        return commands
+
+    def _get_user_story_update_commands(self):
+        commands = []
+        for non_updated_task in self.twoboards.get_user_stories_without_updated_dod_task_report():
+            command = {
+                'id': str(uuid.uuid4()),
+                'type': 'set_checklist_item'
+            }
+            command.update(non_updated_task)
+            commands.append(command)
+        return commands
+
+    def _get_state_commands(self):
         state = self.twoboards.get_user_stories_state()
         commands = []
         for status, user_stories in state.items():
@@ -50,13 +72,6 @@ class Syncer:
                             })
                     else:
                         logger.error('Not possible to generate a command for {}'.format(json.dumps(user_story)))
-
-        if not dry_run:
-            commands = self._apply_commands(commands)
-        else:
-            for command in commands:
-                logger.info('Applying command: {}'.format(json.dumps(command)))
-
         return commands
 
     def _apply_commands(self, commands):
@@ -85,3 +100,7 @@ class Syncer:
         card = list.add_card(command['task']['name'])
         dod_label = self.twoboards.tech_board.get_dod_label()
         card.add_label(dod_label)
+
+    def _set_checklist_item(self, command):
+        card = self.twoboards.client.get_card(command['user_story']['id'])
+        card.definition_of_done.set_checklist_item(command['task'], command['expected_state'])

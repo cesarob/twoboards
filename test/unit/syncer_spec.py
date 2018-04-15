@@ -115,3 +115,37 @@ with description("TwoBoards Sync"):
                     'status': 'Doing',
                 })
             }))
+
+    with description("User Story Update"):
+
+        with it("marks as completed a DoD task when moved to Done"):
+            data = {
+                'product': {
+                    'Todo': {},
+                    'Doing': {
+                        'card1': {
+                            'labels': ['US'],
+                            'checklists': {
+                                'DoD': ['Task1', 'Task2']
+                            }
+                        },
+                    },
+                    'Done': {},
+                },
+                'tech': {
+                    'Todo': {'Task2': {}},
+                    'Doing': {},
+                    'Done': {'Task1': {}}
+                }
+            }
+            syncer = Syncer(create_twoboards(data, pipeline=['Todo', 'Doing', 'Done']))
+
+            commands = syncer.sync(dry_run=True)
+
+            expect(commands).to(have_len(1))
+            expect(commands[0]).to(have_keys({
+                'user_story': have_keys({'name': 'card1'}),
+                'type': 'set_checklist_item',
+                'task': 'Task1',
+                'expected_state': 'complete',
+            }))

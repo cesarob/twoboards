@@ -143,8 +143,8 @@ class Card(Wrapper):
             for checklist in self.contained.checklists:
                 if checklist.name == 'DoD':
                     if len(checklist.items) > 1:
-                        return checklist.items
-        return []
+                        return checklist
+        return None
 
     @property
     def is_user_story(self):

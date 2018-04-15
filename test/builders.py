@@ -1,4 +1,5 @@
-from doublex import Stub, ANY_ARG
+from doublex import Spy
+from hamcrest import ends_with
 
 from twoboards import TwoBoards
 from twoboards.client import Board, List, Card
@@ -6,9 +7,9 @@ from trello import Checklist, Label
 
 
 def create_twoboards(data, pre_pipeline=None, pipeline=None, post_pipeline=None):
-    with Stub() as trello_client:
+    with Spy() as trello_client:
         # Avoid to retrieve the last_activity when building the board
-        trello_client.fetch_json(ANY_ARG).returns({'_value': None})
+        trello_client.fetch_json(ends_with('dateLastActivity')).returns({'_value': None})
 
     def _populate_twoboard_lists(board, list_atribute):
 

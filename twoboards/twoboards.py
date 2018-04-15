@@ -149,7 +149,7 @@ class TwoBoards:
         for status in self.pipeline:
             for card in self.get_product_cards_by_status(status):
                 if card.is_user_story and card.definition_of_done:
-                    for item in card.definition_of_done:
+                    for item in card.definition_of_done.items:
                         status = self._check_dod_task_in_tech(item['name'])
                         if status == 'Done':
                             if item['state'] == 'incomplete':
@@ -258,10 +258,10 @@ class TwoBoards:
                     'error': None
                 }
                 if card.definition_of_done:
-                    for task in card.definition_of_done:
+                    for item in card.definition_of_done.items:
                         user_story['dod'].append({
-                            'name': task['name'],
-                            'state': self._check_dod_task_in_tech(task['name'])
+                            'name': item['name'],
+                            'state': self._check_dod_task_in_tech(item['name'])
                         })
                     user_story['error'] = dod_error(status, user_story)
                 else:
