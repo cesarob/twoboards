@@ -44,6 +44,9 @@ class TwoBoardsCli:
     def show_prod(self):
         self._show_board(self.twoboards.get_product_not_user_stories_tasks_report)
 
+    def show_dod(self):
+        print(self.twoboards.get_user_stories_without_updated_dod_task_report())
+
     def _show_board(self, callable):
         print()
         header = ['Task', 'Labels']
@@ -111,7 +114,7 @@ def show(args):
         cli.show()
     elif args.target == 'pre':
         cli.show_pre_pipeline()
-    elif args.taget == 'post':
+    elif args.target == 'post':
         cli.show_post_pipeline()
     elif args.target == 'tech':
         cli.show_tech()
@@ -123,10 +126,6 @@ def show(args):
 
 def sync(args):
     cli.sync(args.dry_run)
-    if args.show:
-        class Args:
-            target = 'pipeline'
-        show(Args())
 
 
 if __name__ == "__main__":
@@ -142,7 +141,6 @@ if __name__ == "__main__":
 
     sync_parser = subparsers.add_parser('sync', help='Syncs boards')
     sync_parser.add_argument('--dry-run', action='store_true', help="If provided the commands aren't executed")
-    sync_parser.add_argument('--show', action='store_true', help="Shows pipeline status after a sync")
     sync_parser.set_defaults(func=sync)
 
     if len(sys.argv) <= 1:

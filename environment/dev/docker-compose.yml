@@ -7,8 +7,6 @@ services:
     working_dir: /app
     volumes:
       - ../..:/app
-      - ../../../py-trello-mock:/py-trello-mock
-      - ../../../py-trello:/py-trello
     environment:
       - API_KEY
       - API_SECRET
@@ -18,5 +16,4 @@ services:
       - PRE_PIPELINE
       - PIPELINE
       - POST_PIPELINE
-      - PYTHONPATH=.:/py-trello:/py-trello-mock
     command: "python /app/cli.py sync"
