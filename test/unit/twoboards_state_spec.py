@@ -95,8 +95,8 @@ with description("TwoBoards State"):
                         'card1': {},
                     },
                     'Todo': {}
-                    'tech': {}
                 },
+                'tech': {}
             }
             twoboards = create_twoboards(data, pre_pipeline=['Backlog'], pipeline=['Todo'])
 
